@@ -1108,7 +1108,7 @@ var C = require("/node_modules/react/jsx-runtime?_v=18.0.0&_env=prod");
 k.default.createRoot(document.querySelector("#root")).render((0, C.jsx)(x, {}));</script>
     <script>
   function sendHeightToParent() {
-    const height = document.documentElement.scrollHeight + 12;
+    const height = document.documentElement.scrollHeight;
     window.parent.postMessage({ height }, "*");
   }
 
