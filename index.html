@@ -50,6 +50,12 @@
       .card-section-content {
          color: #4b5563; /* Tailwind gray-600 */
       }
+      .expand-arrow {
+        transition: transform 0.2s ease-in-out;
+      }
+      .expanded .expand-arrow {
+        transform: rotate(90deg);
+      }
     </style>
   </head>
   <body>
@@ -62,14 +68,12 @@
         const [currentStep, setCurrentStep] = useState(0);
         const [answers, setAnswers] = useState({});
         const [showResults, setShowResults] = useState(false);
+        const [expandedMethods, setExpandedMethods] = useState({}); 
 
-        // Filters state
         const [filterMatchScore, setFilterMatchScore] = useState('all'); 
         const [filterDeliveryMode, setFilterDeliveryMode] = useState('all'); 
         const [filterResourceLevel, setFilterResourceLevel] = useState('all'); 
 
-
-        // Define the decision tree questions
         const questions = [
           {
             id: 'impact',
@@ -147,7 +151,6 @@
           }
         ];
         
-        // Enhanced engagement methods data
         const engagementMethods = [
             {
                 name: 'Project page on engagement platform',
@@ -231,12 +234,12 @@
                 bestFor: {
                     impact: ['low', 'moderate', 'high'],
                     influence: ['consult', 'involve', 'collaborate'],
-                    policyArea: ['housing', 'transportation', 'parks', 'environment', 'infrastructure'], // Updated
+                    policyArea: ['housing', 'transportation', 'parks', 'environment', 'infrastructure'], 
                     digitalAccess: ['high', 'mixed'],
                     resources: ['moderate', 'substantial'],
                     demographicTargeting: ['general', 'youth', 'business']
                 },
-                whyThisWorks: 'Excellent for projects with a spatial component, allowing for specific, location-based feedback and collaborative planning, especially when involving or collaborating with the public.',
+                whyThisWorks: 'Excellent for projects with a spatial component (like urban planning, mobility, or green spaces), allowing for specific, location-based feedback and collaborative planning.',
                 tips: ['Ensure the interface is intuitive.', 'Provide clear instructions.', 'Define clear categories for comments if possible.'],
                 tools: 'Digital mapping platform, printed maps for offline versions',
                 blendIdeas: 'Combine digital maps with printed versions at community centers; staff can help digitize paper responses.'
@@ -276,24 +279,6 @@
                 tips: ['Go where people already are: farmers markets, festivals, school events.', 'Keep interactions brief and engaging.', 'Can be combined with brief interviews to gather qualitative insights.'],
                 tools: 'Portable displays, engaging activities, quick feedback mechanisms (e.g., dot voting, comment cards), interview guides',
                 blendIdeas: 'Use tablets for digital feedback, provide QR codes for later engagement. Conduct short, informal interviews and record key themes.'
-            },
-            {
-                name: 'Citizen advisory committee',
-                description: 'A representative group that meets regularly to provide ongoing input.',
-                type: 'engagement',
-                deliveryMode: 'both',
-                resourceIntensity: 'moderate',
-                bestFor: {
-                    impact: ['moderate', 'high'],
-                    influence: ['involve', 'collaborate', 'empower'],
-                    digitalAccess: ['mixed', 'high'],
-                    resources: ['moderate', 'substantial'],
-                    demographicTargeting: ['general', 'seniors', 'minorities', 'lowIncome', 'business']
-                },
-                whyThisWorks: 'Facilitates in-depth, ongoing dialogue and co-creation with a dedicated group, suitable for projects requiring sustained public involvement, collaboration, or empowerment.',
-                tips: ["Ensure diverse representation.", "Be clear about the committee's role and authority.", "Provide necessary training and resources to members."],
-                tools: 'Selection process, meeting facilitation, documentation system',
-                blendIdeas: 'Offer hybrid meeting options. Use digital platforms to share materials and gather input between meetings.'
             },
             {
                 name: 'Participatory budgeting',
@@ -342,7 +327,7 @@
                     influence: ['inform'],
                     digitalAccess: ['high', 'mixed'],
                     resources: ['minimal', 'moderate'],
-                    demographicTargeting: ['general', 'youth', 'business']
+                    demographicTargeting: ['general', 'youth', 'business'] 
                 },
                 whyThisWorks: 'Leverages existing networks for wide dissemination of information and directing traffic to primary engagement platforms, cost-effective for broad outreach when the goal is to inform.',
                 tips: ['Use the Rule of Thirds: 1/3 project promotion, 1/3 sharing relevant content, 1/3 interaction.', 'Never use social media as the primary feedback collection method.', 'Tailor content to each platform.'],
@@ -431,12 +416,12 @@
                 resourceIntensity: 'substantial',
                 bestFor: {
                     impact: ['moderate', 'high'],
-                    influence: ['collaborate', 'empower'],
+                    influence: ['consult'], 
                     digitalAccess: ['mixed', 'high'],
-                    resources: ['substantial'],
+                    resources: ['substantial'], 
                     demographicTargeting: ['general', 'seniors', 'business', 'minorities'] 
                 },
-                whyThisWorks: 'Enables deep, informed deliberation on complex issues by a representative group of citizens, leading to well-considered recommendations. Best suited for high-influence scenarios like collaboration and empowerment.',
+                whyThisWorks: 'Enables deep, informed deliberation on complex issues by a representative group of citizens, leading to well-considered recommendations. Only suitable for consultation with substantial resources.',
                 tips: ['Provide balanced information beforehand.', 'Use skilled facilitators for complex topics.', 'Requires substantial resources and time commitment.', 'Ensure a demographically representative selection of participants.'],
                 tools: 'Discussion guide, background materials, trained facilitators, documentation method, participant selection process',
                 blendIdeas: 'Offer pre-reading and discussion questions online. Create hybrid forums with virtual participation options for some segments.'
@@ -452,9 +437,9 @@
                     influence: ['inform'],
                     digitalAccess: ['high', 'mixed'],
                     resources: ['moderate', 'substantial'],
-                    demographicTargeting: ['general', 'youth', 'seniors', 'immigrants', 'minorities']
+                    demographicTargeting: ['general', 'youth', 'seniors', 'immigrants', 'minorities'] 
                 },
-                whyThisWorks: 'Engaging way to present complex information visually, good for reaching audiences who prefer visual content over text, primarily for informing.',
+                whyThisWorks: 'Engaging way to present complex information visually, good for reaching audiences who prefer visual content over text, primarily for informing. Highly effective for youth and general public.',
                 tips: ['Keep videos short (under 5 minutes for informational, longer for recorded events).', 'Include variety in presentation styles and visuals.', 'Add closed captioning and transcripts for accessibility.'],
                 tools: 'Video recording equipment (can be a smartphone), editing software (many free options), hosting platform (YouTube, Vimeo, or self-hosted)',
                 blendIdeas: 'Show videos at in-person events. Include QR codes on printed materials linking to video content. Use short clips on social media.'
@@ -490,10 +475,11 @@
                     resources: ['moderate', 'substantial'],
                     demographicTargeting: ['general', 'seniors', 'immigrants', 'lowIncome', 'rural']
                 },
-                whyThisWorks: 'Essential for reaching community members with limited or no digital access, provides tangible information when the primary goal is to inform.',
+                whyThisWorks: 'Essential for reaching community members with limited or no digital access, provides tangible information when the primary goal is to inform. Always a highly relevant foundational communication method.',
                 tips: ['Use clear, large font and simple language.', 'Include translations for key demographic groups.', 'Provide clear contact information and next steps.', 'Strategically place posters in high-traffic community locations.'],
                 tools: 'Graphic design software, printing services, distribution methods (mail, hand-delivery, community noticeboards)',
-                blendIdeas: 'Include QR codes on printed materials linking to online project pages or surveys. Announce in-person events through flyers.'
+                blendIdeas: 'Include QR codes on printed materials linking to online project pages or surveys. Announce in-person events through flyers.',
+                alwaysHighlyRecommended: true 
             },
              {
                 name: 'Email newsletter',
@@ -584,9 +570,12 @@
         };
 
         const calculateMatches = () => {
-          return engagementMethods.map(method => {
+          let methodsWithScores = engagementMethods.map(method => {
             if (method.always100) {
               return { ...method, matchScore: Object.keys(answers).length, matchPercentage: 100, relevantCriteria: Object.keys(answers).length };
+            }
+             if (method.alwaysHighlyRecommended) { 
+              return { ...method, matchScore: Object.keys(answers).length, matchPercentage: 98, relevantCriteria: Object.keys(answers).length }; 
             }
 
             let score = 0;
@@ -617,15 +606,58 @@
             
             let percentage = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0; 
 
+            // Specific boosts/caps
             if (method.name === 'Mobile outreach unit' && answers.targetGroups) {
                 const targetedSensitiveGroups = ['minorities', 'youth', 'seniors'];
                 if (answers.targetGroups.some(group => targetedSensitiveGroups.includes(group))) {
                     percentage = Math.max(percentage, 90); 
                 }
             }
+            if (method.name === 'Videos' && answers.targetGroups) {
+                if (answers.targetGroups.includes('youth') || answers.targetGroups.includes('general')) {
+                     percentage = Math.max(percentage, 85); 
+                }
+            }
+            if (method.name === 'Social media information sharing' && answers.targetGroups && answers.targetGroups.includes('seniors')) {
+                percentage = Math.min(percentage, 60); 
+            }
+            if (method.name === 'Citizens\' assembly') {
+                if (!(answers.influence === 'consult' && answers.resources === 'substantial')) {
+                    percentage = 0; 
+                } else {
+                    percentage = maxScore > 0 ? Math.max(percentage, 75) : 75; 
+                }
+            }
+            if (method.name === 'Interactive mapping' && answers.policyArea) {
+                const urbanPlanningRelated = ['housing', 'transportation', 'parks', 'environment', 'infrastructure'];
+                if (answers.policyArea === 'health') {
+                    if (percentage > 0) { 
+                        percentage = Math.min(Math.max(percentage, 60), 70);
+                    } else {
+                        percentage = 0; 
+                    }
+                } else if (!urbanPlanningRelated.includes(answers.policyArea)) {
+                    percentage = Math.min(percentage, 79);
+                }
+            }
+            if (method.name === 'In-person town hall' || method.name === 'Virtual town hall') {
+                percentage = Math.min(percentage, 75);
+            }
+
             return { ...method, matchScore: score, matchPercentage: percentage, relevantCriteria };
-          })
-            .filter(method => method.relevantCriteria > 0 || method.always100)
+          });
+
+          const socialMediaMethod = methodsWithScores.find(m => m.name === 'Social media information sharing');
+          const videoMethodIndex = methodsWithScores.findIndex(m => m.name === 'Videos');
+
+          if (socialMediaMethod && videoMethodIndex !== -1) {
+            if (methodsWithScores[videoMethodIndex].matchPercentage > socialMediaMethod.matchPercentage) {
+              methodsWithScores[videoMethodIndex].matchPercentage = socialMediaMethod.matchPercentage;
+            }
+          }
+          
+          return methodsWithScores
+            .filter(method => method.relevantCriteria > 0 || method.always100 || method.alwaysHighlyRecommended)
             .sort((a, b) => b.matchPercentage - a.matchPercentage);
         };
         
@@ -683,49 +715,72 @@
           );
         };
 
-
         const cardSectionBaseStyle = "text-xs sm:text-sm";
         const cardSectionLabelStyle = `${cardSectionBaseStyle} font-bold text-gray-800`; 
         const cardSectionContentStyle = `${cardSectionBaseStyle} text-gray-600`; 
 
+        const toggleExpandMethod = (methodName) => {
+          setExpandedMethods(prev => ({
+            ...prev,
+            [methodName]: !prev[methodName]
+          }));
+        };
 
-        const renderMethodCard = (method, category) => (
-          <div key={method.name} className="p-4 border rounded-lg"
-            style={{ 
-              borderColor: category === 'high' ? goVocalColors.royalBlue : (category === 'medium' ? goVocalColors.royalBlue : '#d1d5db'), 
-              backgroundColor: category === 'high' ? goVocalColors.highRecommendBg : (category === 'medium' ? goVocalColors.lightBlue : '#f9fafb')
-            }}>
-            <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-2">
-              <h4 className="text-md sm:text-lg font-semibold mb-1 sm:mb-0" style={{ color: goVocalColors.royalBlue }}>
-                {method.name}
-              </h4>
-              <span className="px-2 py-1 rounded-full text-xs sm:text-sm font-medium self-start sm:self-center"
-                style={{ backgroundColor: category === 'high' || category === 'medium' ? goVocalColors.royalBlue : '#e5e7eb', color: category === 'high' || category === 'medium' ? 'white' : goVocalColors.royalBlue }}>
-                {method.matchPercentage}% match
-              </span>
-            </div>
-            <p className={`${cardSectionContentStyle} mb-3`}>{method.description}</p>
-            {method.whyThisWorks && (
-              <div className="why-this-works mb-3">
-                <span className={cardSectionLabelStyle}>Why this works:</span> <span className={cardSectionContentStyle}>{method.whyThisWorks}</span>
+        const renderMethodCard = (method, category) => {
+          const isExpanded = !!expandedMethods[method.name];
+          const showDetailsClass = isExpanded ? 'block' : 'hidden';
+
+          return (
+            <div key={method.name} className="p-4 border rounded-lg"
+              style={{ 
+                borderColor: category === 'high' ? goVocalColors.royalBlue : (category === 'medium' ? goVocalColors.royalBlue : '#d1d5db'), 
+                backgroundColor: category === 'high' ? goVocalColors.highRecommendBg : (category === 'medium' ? goVocalColors.lightBlue : '#f9fafb')
+              }}>
+              <div 
+                className="flex flex-col sm:flex-row justify-between sm:items-center mb-2 cursor-pointer md:cursor-default"
+                onClick={() => window.innerWidth < 768 && toggleExpandMethod(method.name)} 
+              >
+                <h4 className="text-md sm:text-lg font-semibold mb-1 sm:mb-0" style={{ color: goVocalColors.royalBlue }}>
+                  {method.name}
+                </h4>
+                <div className="flex items-center self-start sm:self-center">
+                    <span className="px-2 py-1 rounded-full text-xs sm:text-sm font-medium"
+                        style={{ backgroundColor: category === 'high' || category === 'medium' ? goVocalColors.royalBlue : '#e5e7eb', color: category === 'high' || category === 'medium' ? 'white' : goVocalColors.royalBlue }}>
+                        {method.matchPercentage}% match
+                    </span>
+                    <span className={`md:hidden ml-2 expand-arrow ${isExpanded ? 'expanded' : ''}`}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5" style={{ color: goVocalColors.royalBlue }}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </span>
+                </div>
               </div>
-            )}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-              <div className="tips-list">
-                <h5 className={cardSectionLabelStyle}>Tips:</h5>
-                {renderTips(method.tips)}
-              </div>
-              <div>
-                <h5 className={cardSectionLabelStyle}>Tools needed:</h5>
-                <p className={cardSectionContentStyle}>{method.tools}</p>
+              <p className={`${cardSectionContentStyle} mb-3`}>{method.description}</p>
+              
+              <div className={`${showDetailsClass} md:block`}>
+                {method.whyThisWorks && (
+                  <div className="why-this-works my-3"> 
+                    <span className={cardSectionLabelStyle}>Why this works:</span> <span className={cardSectionContentStyle}>{method.whyThisWorks}</span>
+                  </div>
+                )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                  <div className="tips-list">
+                    <h5 className={cardSectionLabelStyle}>Tips:</h5>
+                    {renderTips(method.tips)}
+                  </div>
+                  <div>
+                    <h5 className={cardSectionLabelStyle}>Tools needed:</h5>
+                    <p className={cardSectionContentStyle}>{method.tools}</p>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <h5 className={cardSectionLabelStyle}>Blended engagement ideas:</h5>
+                  <p className={cardSectionContentStyle}>{method.blendIdeas}</p>
+                </div>
               </div>
             </div>
-            <div className="mt-3">
-              <h5 className={cardSectionLabelStyle}>Blended engagement ideas:</h5>
-              <p className={cardSectionContentStyle}>{method.blendIdeas}</p>
-            </div>
-          </div>
-        );
+          );
+        }
         
         const renderMethodSection = (title, methods, category) => {
             const { information, engagement } = methods;
@@ -747,7 +802,6 @@
                             </div>
                         </div>
                     )}
-                    {/* Conditionally render engagement methods */}
                     {!onlyShowInformation && engagement.length > 0 && (
                          <div className={information.length > 0 ? "mt-6" : ""}> 
                             <h4 className="text-sm sm:text-md font-semibold mb-2" style={{color: goVocalColors.salmon}}>Engagement methods</h4>
@@ -928,7 +982,6 @@
                   >
                     Start over
                   </button>
-                  {/* PDF Export button removed */}
                 </div>
 
                 <div className="mt-8 p-4 rounded-lg" style={{ backgroundColor: goVocalColors.mint }}>
